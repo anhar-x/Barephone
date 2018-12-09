@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:padding="0dp"
+        android:text=""
+        android:textColor="#000000"
+        android:textSize="60sp" />
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="170dp"
+        android:text=""
+        android:textColor="#000000"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/nextAlarmTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="215dp"
+        android:text=""
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/nextAlarmImageView"
+        android:layout_width="29dp"
+        android:layout_height="17dp"
+        android:layout_marginTop="216dp"
+        android:layout_toLeftOf="@+id/nextAlarmTextView"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/alarm_black" />
+
+    <ImageView
+        android:id="@+id/app1"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginBottom="210dp"
+        app:srcCompat="@drawable/add_new_item"
+        android:tag="1"/>
+
+    <ImageView
+        android:id="@+id/app2"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="200dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginBottom="210dp"
+        app:srcCompat="@drawable/add_new_item"
+        android:tag="2"/>
+
+    <ImageView
+        android:id="@+id/app3"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="240dp"
+        android:layout_marginStart="240dp"
+        android:layout_marginBottom="140dp"
+        app:srcCompat="@drawable/add_new_item"
+        android:tag="3"/>
+
+    <ImageView
+        android:id="@+id/app4"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="150dp"
+        android:layout_marginStart="150dp"
+        android:layout_marginBottom="140dp"
+        app:srcCompat="@drawable/add_new_item"
+        android:tag="4"/>
+
+    <ImageView
+        android:id="@+id/app5"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="60dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="140dp"
+        app:srcCompat="@drawable/add_new_item"
+        android:tag="5"/>
+
+    <ImageView
+        android:id="@+id/secondActivityButton"
+        android:layout_width="75dp"
+        android:layout_height="52dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="140dp"
+        android:onClick="openSecondActivity"
+        android:padding="10dp"
+        android:tag="1"
+        app:srcCompat="@drawable/arrow_down_black" />
+
+</RelativeLayout>
