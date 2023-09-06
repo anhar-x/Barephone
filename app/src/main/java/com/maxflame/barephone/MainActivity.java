@@ -1,4 +1,4 @@
-package com.example.anhar.barephone;
+package com.maxflame.barephone;
 
 import android.app.ProgressDialog;
 import android.content.ContentUris;
@@ -6,7 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.AlarmClock;
@@ -93,11 +96,13 @@ public class MainActivity extends AppCompatActivity {
         app4 = findViewById(R.id.app4);
         app5 = findViewById(R.id.app5);
 
+
         apps.add(app1);
         apps.add(app2);
         apps.add(app3);
         apps.add(app4);
         apps.add(app5);
+
 
         for(int i = 0; i < apps.size(); i++){
             if(sharedPreferences.getString("packageName" + apps.get(i).getTag(), null) != null){

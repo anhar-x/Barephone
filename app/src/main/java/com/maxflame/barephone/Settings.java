@@ -1,4 +1,4 @@
-package com.example.anhar.barephone;
+package com.maxflame.barephone;
 
 import android.content.Intent;
 import android.graphics.Color;

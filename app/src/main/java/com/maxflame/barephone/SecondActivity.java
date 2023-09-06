@@ -1,6 +1,8 @@
-package com.example.anhar.barephone;
+package com.maxflame.barephone;
 
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,15 +13,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -28,17 +35,13 @@ import static android.graphics.Color.WHITE;
 
 public class SecondActivity extends AppCompatActivity {
 
-    public static ArrayList<String> listOfApps = new ArrayList<>();
+    public static ArrayList<App> listOfApps = new ArrayList<>();
+
     ArrayAdapter arrayAdapter;
     ListView listView;
 
-    //if the clicked app equal "Select an app", the indexOfThis is added to realClickedApp
-    String clickedApp;
-    //this is the index of the clickedApp
-    public static int realClickedApp = -1;
+    App clickedApp;
 
-    //this is the id of newly added textView, this is increased!
-    int numberOfAppsAdded = -1;
     //this is the position of the app that was clicked. This is used in sharedPreference!
     public static int thePosition;
     int sizeOfSavedList = 0;
@@ -48,6 +51,10 @@ public class SecondActivity extends AppCompatActivity {
 
     //loading dialog
     public static ProgressDialog secondActivityDialog;
+
+    //searchMenu is only used to change it's color
+    MenuItem searchMenu;
+    SearchView searchView;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,7 +73,38 @@ public class SecondActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        return true;
+
+
+        getMenuInflater().inflate(R.menu.second_activity_menu, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
+
+        searchMenu = menu.findItem(R.id.app_bar_search);
+        if(MainActivity.sharedPreferences.getBoolean("light", false)){
+            searchMenu.setIcon(R.drawable.search_black);
+        }else{
+            searchMenu.setIcon(R.drawable.search_white);
+        }
+
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchView.setIconifiedByDefault(false);
+        }
+
+        SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+            public boolean onQueryTextChange(String newText) {
+                arrayAdapter.getFilter().filter(newText);
+                return true;
+            }
+            public boolean onQueryTextSubmit(String query) {
+                searchView.clearFocus();
+                return true;
+            }
+        };
+
+        searchView.setOnQueryTextListener(queryTextListener);
+        return super.onCreateOptionsMenu(menu);
     }
 
     public void changeMenuItemColor(int i, int color, Menu menu){
@@ -79,17 +117,8 @@ public class SecondActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //ADDS A NEW TEXT VIEW
-        numberOfAppsAdded++;
         if(item.getItemId() == R.id.addNewApp){
-            TextView textView = new TextView(SecondActivity.this);
-            textView.setId(numberOfAppsAdded);
-            textView.setText("Select an app");
-
-            listOfApps.add(textView.getText().toString());
-            arrayAdapter.notifyDataSetChanged();
-
-            realClickedApp = listOfApps.size();
-            thePosition = listOfApps.size() -1;
+            thePosition = listOfApps.size();
 
             secondActivityDialog =new ProgressDialog(SecondActivity.this);
             secondActivityDialog.setMessage("Loading...");
@@ -100,9 +129,21 @@ public class SecondActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), AppDrawer.class);
             startActivity(intent);
         }
+
         if(item.getItemId() == R.id.settings){
             Intent intent = new Intent(getApplicationContext(), Settings.class);
             startActivity(intent);
+        }
+
+        //TO SHOW KEYBOARD IF THE USER CLICKS ON THE SEARCH ICON
+        if(item.getItemId() == R.id.app_bar_search){
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (inputMethodManager != null) {
+                inputMethodManager.showSoftInput(searchView, 0);
+                searchView.setIconified(false);
+                searchView.requestFocus();
+
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -129,7 +170,7 @@ public class SecondActivity extends AppCompatActivity {
 
         ImageView upArrow = findViewById(R.id.mainActivityButton);
 
-        sharedPreferences2 =getSharedPreferences("shared2", MODE_PRIVATE);
+        sharedPreferences2 = getSharedPreferences("shared2", MODE_PRIVATE);
 
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfApps);
 
@@ -139,7 +180,6 @@ public class SecondActivity extends AppCompatActivity {
         //if listView is null, this text will be shown
         TextView noListTextView = findViewById(R.id.noList);
         listView.setEmptyView(noListTextView);
-
 
         try{
             if(MainActivity.sharedPreferences.getBoolean("light", false)){
@@ -156,33 +196,16 @@ public class SecondActivity extends AppCompatActivity {
         }
 
 
-        if(realClickedApp != -1){
-            try{
-                String appName = sharedPreferences2.getString("selectedItem" + thePosition, "Select an app");
-                listOfApps.set(thePosition, appName); //sets appName to the position of realClickedApp
-                arrayAdapter.notifyDataSetChanged();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                clickedApp = listView.getItemAtPosition(i).toString();
-
-                if(clickedApp.equals("Select an app")){
-                    thePosition = i;
-                    realClickedApp = listOfApps.indexOf(clickedApp) ;
-
-                    Intent appDrawerIntent = new Intent(getApplicationContext(), AppDrawer.class);
-                    startActivity(appDrawerIntent);
-                }else{
-                    String packageName = sharedPreferences2.getString("packageName" + thePosition, "");
-
-                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-                    startActivity(launchIntent);
+                clickedApp = (App) listView.getItemAtPosition(i);
+                if (!searchView.isIconified()) {
+                    searchView.setIconified(true);
                 }
+                Intent launchIntent = getPackageManager().getLaunchIntentForPackage(clickedApp.packageName);
+                startActivity(launchIntent);
+
             }
 
         });
@@ -216,7 +239,7 @@ public class SecondActivity extends AppCompatActivity {
             sizeOfSavedList++;
         }
 
-        if(sharedPreferences2.contains("initialized") && listOfApps.size() == 0){
+        if(sharedPreferences2.contains("initialized")){
             try{
                 retrieveListData();
             }catch(Exception e){
@@ -227,15 +250,24 @@ public class SecondActivity extends AppCompatActivity {
 
     public void saveListToDatabase() {
         for (int i = 0; i < listOfApps.size(); i++) {
-            sharedPreferences2.edit().putString("listData" + i, listOfApps.get(i)).apply();
+            Gson gson = new Gson();
+            String appJson = gson.toJson(listOfApps.get(i));
+            sharedPreferences2.edit().putString("listData" + i, appJson).apply();
         }
     }
 
     public void retrieveListData(){
+        listOfApps.clear();
+
         for(int i = 0; sharedPreferences2.contains("listData" + i) ; i++){
-            listOfApps.add(i, sharedPreferences2.getString("listData" + i, "it's not working"));
-            arrayAdapter.notifyDataSetChanged();
+            Gson gson = new Gson();
+            String appJson = sharedPreferences2.getString("listData" + i, "");
+
+            App app = gson.fromJson(appJson, App.class);
+            listOfApps.add(i, app);
         }
+
+        arrayAdapter.notifyDataSetChanged();
     }
 
     public void openMainActivity(View view){
@@ -245,9 +277,15 @@ public class SecondActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        //TO TURN DOWN THE KEYBOARD
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
+        }
+
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
     }
+
 
 
 }

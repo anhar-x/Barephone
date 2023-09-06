@@ -18,19 +18,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:text="No app added yet."
+        android:text="No apps added yet."
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:textColor="#000000"/>
 
     <ImageView
         android:id="@+id/mainActivityButton"
-        android:layout_width="84dp"
+        android:layout_width="90dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:onClick="openMainActivity"
         android:padding="10dp"
-        app:srcCompat="@drawable/arrow_up_black" />
+        app:srcCompat="@drawable/arrow_up_black"
+
+        />
 
 </RelativeLayout>

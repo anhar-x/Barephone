@@ -1,4 +1,4 @@
-package com.example.anhar.barephone;
+package com.maxflame.barephone;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -18,6 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,21 +44,6 @@ public class AppDrawer extends AppCompatActivity {
     //searchMenu is only used to change it's color
     MenuItem searchMenu;
     SearchView searchView;
-
-    public class App {
-        public String name;
-        public String packageName;
-
-        public App(final String name,final String packageName) {
-            this.name = name;
-            this.packageName = packageName;
-        }
-
-        @Override
-        public String toString() {
-            return this.name;
-        }
-    }
 
     public void findAndAddAppsToList(){
         PackageManager pm = getPackageManager();
@@ -128,8 +115,10 @@ public class AppDrawer extends AppCompatActivity {
                     //for checking if there is something saved in SharedPreferences, for retrieving, only used in SecondActivity
                     SecondActivity.sharedPreferences2.edit().putString("initialized", "initialized").apply();
 
-                    SecondActivity.sharedPreferences2.edit().putString("selectedItem" + Integer.toString(SecondActivity.thePosition), selectedApp.name).apply();
-                    SecondActivity.sharedPreferences2.edit().putString("packageName" +  , selectedApp.packageName).apply();
+                    Gson gson = new Gson();
+                    String appJson = gson.toJson(selectedApp);
+
+                    SecondActivity.sharedPreferences2.edit().putString("listData" + Integer.toString(SecondActivity.thePosition), appJson).apply();
 
                     Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
                     startActivity(intent);
